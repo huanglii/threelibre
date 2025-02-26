@@ -41,9 +41,8 @@ function loadObj(options, cb, promise) {
 			break;
 	}
 
-	materialLoader.withCredentials = options.withCredentials;
 	materialLoader.load(options.mtl, loadObject, () => (null), error => {
-		console.warn("No material file found " + error.stack);
+		console.warn("No material file found for SymbolLayer3D model " + m);
 	});
 
 	function loadObject(materials) {
@@ -53,7 +52,6 @@ function loadObj(options, cb, promise) {
 			loader.setMaterials(materials);
 		}
 
-		loader.withCredentials = options.withCredentials;
 		loader.load(options.obj, obj => {
 
 			//[jscastro] MTL/GLTF/FBX models have a different structure

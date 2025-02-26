@@ -59,7 +59,6 @@
 				bearing: 0,
 				zoom: 16,
 				style: "satellite",
-				antialias: true,
 				showBuildingModels: false
 			});
 
@@ -86,7 +85,7 @@
 				}
 			);
 			tb.setSunlight(new Date(2020, 6, 18, 18))
-			map.events.add("style.load", function (e) {
+			map.events.add("load", function (e) {
 				
 				intMap.getContainer().appendChild(stats.dom);
 				animate();

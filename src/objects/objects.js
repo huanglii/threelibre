@@ -327,18 +327,6 @@ Objects.prototype = {
 				get() { return obj.getObjectByName(helpName); }
 			});
 
-			let _hidden = false;
-			//[jscastro] added property for explicitely hidden object to avoid zoom layer behavior
-			Object.defineProperty(obj, 'hidden', {
-				get() { return _hidden; },
-				set(value) {
-					if (_hidden != value) {
-						_hidden = value;
-						obj.visibility = !_hidden;
-					}
-				}
-			});
-
 			//[jscastro] added property to redefine visible, including the label and tooltip
 			Object.defineProperty(obj, 'visibility', {
 				get() { return obj.visible; },
@@ -355,8 +343,6 @@ Objects.prototype = {
 					}
 					else return;
 					if (obj.visible != _value) {
-						if (obj.hidden && _value) return;
-
 						obj.visible = _value;
 
 						if (obj.model) {
@@ -760,7 +746,7 @@ Objects.prototype = {
 
 			//[jscastro] sets the scale of an object based fixedZoom
 			obj.setFixedZoom = function (scale) {
-				if (obj.fixedZoom != null && obj.fixedZoom != 0) {
+				if (obj.fixedZoom != null) {
 					if (!scale) scale = obj.userData.mapScale;
 					let s = zoomScale(obj.fixedZoom);
 					if (s > scale) {
@@ -775,7 +761,7 @@ Objects.prototype = {
 			//[jscastro] sets the scale of an object based in the scale and fixedZoom
 			obj.setScale = function (scale) {
 				// scale the model so that its units are interpreted as meters at the given latitude
-				if (obj.userData.units != 'scene') {
+				if (obj.userData.units === 'meters' && !obj.fixedZoom) {
 					let s = obj.unitsPerMeter;
 					obj.scale.set(s, s, s);
 				} else if (obj.fixedZoom) {
@@ -1071,9 +1057,7 @@ Objects.prototype = {
 			anchor: 'bottom-left',
 			bbox: true,
 			tooltip: true,
-			raycasted: true,
-			clone: true,
-			withCredentials: false
+			raycasted: true
 		},
 
 		Object3D: {
@@ -1089,7 +1073,7 @@ Objects.prototype = {
 			coordinates: [[[]]],
 			geometryOptions: {},
 			height: 100,
-			materials: new THREE.MeshPhongMaterial({ color: 0x660000, side: THREE.DoubleSide }),
+			materials: null,
 			scale: 1,
 			rotation: 0,
 			units: 'scene',

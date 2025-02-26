@@ -5,8 +5,9 @@
 	<script src="../dist/threebox.js" type="text/javascript"></script>
 	<link href="../dist/threebox.css" rel="stylesheet" />
 	<script src="config.js"></script>
-	<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
-	<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css" rel="stylesheet" />
+
 	<script src="plugins/jquery.min.js"></script>
 	<!-- Place your kit's code here -->
 	<script src="css/fontawesome.js"></script>
@@ -70,8 +71,7 @@
 			style: 'mapbox://styles/mapbox/light-v9',
 			center: origin,
 			zoom: 12,
-			pitch: 60,
-			antialias: true,
+			pitch: 60
 		});
 
 		// we can add Threebox to mapbox to add built-in mouseover/mouseout and click behaviors
@@ -85,7 +85,6 @@
 		);
 
 		 
-		import { GUI } from 'https://threejs.org/examples/jsm/libs/lil-gui.module.min.js';
 		import Stats from 'https://threejs.org/examples/jsm/libs/stats.module.js';
 
 		map.on('style.load', function () {
@@ -110,14 +109,15 @@
 			})
 		});
 
+		import { GUI } from 'https://threejs.org/examples/jsm/libs/dat.gui.module.js';
+
 		let stats, gui, guiStatsEl;
 		let geometry = false;
 		let meshes = [];
 
 		// gui
 		var Method = {
-			CLONED: 'CLONED',
-			NOCLONED: 'NO CLONED'
+			CLONED: 'CLONED'
 		};
 
 		var api = {
@@ -154,8 +154,7 @@
 					scale: model.scale,
 					units: 'meters',
 					rotation: { x: 90, y: 90, z: 0 },
-					anchor: 'center',
-					cloned: (api.method == Method.CLONED ? true : false)
+					anchor: 'center'
 				}
 				if (!processing) makeNaive(options, diff);
 
@@ -220,7 +219,7 @@
 			guiStatsEl = document.createElement('li');
 			guiStatsEl.classList.add('gui-stats');
 
-			perfFolder.$children.appendChild(guiStatsEl);
+			perfFolder.__ul.appendChild(guiStatsEl);
 			perfFolder.open();
 
 		}
@@ -236,14 +235,13 @@
 			meshes.forEach(function (g) {
 				geometryByteLength += getGeometryByteLength(g);
 			});
-			let multiplier = (api.method == Method.CLONED ? 1 : api.count);
 			guiStatsEl.innerHTML = [
 
-				'<i>GPU draw calls</i>: ' + multiplier,
-				'<i>GPU memory</i>: ' + formatBytes(multiplier * 16 + geometryByteLength, 2),
-				'<i>WebGL geometries</i>: ' + tb.memory().geometries * multiplier,
-				'<i>WebGL textures</i>: ' + tb.memory().textures * multiplier,
-				'<i>WebGL programs</i>: ' + tb.programs() * multiplier
+				'<i>GPU draw calls</i>: ' + api.count,
+				'<i>GPU memory</i>: ' + formatBytes(api.count * 16 + geometryByteLength, 2),
+				'<i>WebGL geometries</i>: ' + tb.memory().geometries * api.count,
+				'<i>WebGL textures</i>: ' + tb.memory().textures * api.count,
+				'<i>WebGL programs</i>: ' + tb.programs() * api.count
 
 			].join('<br/>');
 		}

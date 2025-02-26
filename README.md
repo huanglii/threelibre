@@ -1,12 +1,11 @@
 # `Threebox`
 
-![npm](https://img.shields.io/npm/dt/threebox-plugin?style=social)
-![npm](https://img.shields.io/npm/dw/threebox-plugin?style=flat-square)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/jscastro76/threebox?style=flat-square)](https://github.com/jscastro76/threebox/releases/)
 [![NPM version](http://img.shields.io/npm/v/threebox-plugin.svg?style=flat-square)](https://www.npmjs.org/package/threebox-plugin)
 [![NPM license](http://img.shields.io/npm/l/threebox-plugin.svg?style=flat-square)](https://www.npmjs.org/package/threebox-plugin)
+![npm](https://img.shields.io/npm/dt/threebox-plugin?style=social)
 
-A **[*Three.js*](https://threejs.org/)** plugin for **[*Mapbox GL JS*](https://docs.mapbox.com/mapbox-gl-js/examples/)** and **[*Azure Maps*](https://azure.microsoft.com/en-us/services/azure-maps/)** using the [`CustomLayerInterface`](https://docs.mapbox.com/mapbox-gl-js/api/properties/#customlayerinterface) feature. Provides convenient methods to manage objects in lnglat coordinates, and to synchronize the map and scene cameras.
+A **[*Three.js*](https://threejs.org/) (r127)** plugin for **[*Mapbox GL JS*](https://docs.mapbox.com/mapbox-gl-js/examples/)** and **[*Azure Maps*](https://azure.microsoft.com/en-us/services/azure-maps/)** using the [`CustomLayerInterface`](https://docs.mapbox.com/mapbox-gl-js/api/properties/#customlayerinterface) feature. Provides convenient methods to manage objects in lnglat coordinates, and to synchronize the map and scene cameras.
 <img alt="threebox" src="docs/gallery.jpg">
 
 <br>
@@ -44,16 +43,17 @@ npm i threebox-plugin
 |---------|-------
 |<img alt="threebox" src="https://i.postimg.cc/43Lh7vvR/Customizable-FOV.gif" width="100%">|<img alt="threebox" src="https://i.postimg.cc/50KqJdKv/extrusions.gif" width="100%">
 
-|Sunlight illumination for a given datetime and lnglat|Models built-in shadows and sky layer synced with Sunlight
+|Models built-in shadows|Sunlight illumination for a given datetime and lnglat
 |---------|-------
-|<img alt="threebox" src="https://i.postimg.cc/6QnjWSVm/Eiffel-Shadow.gif" width="100%">|<img alt="threebox" src="https://i.postimg.cc/63Y7SP6t/SunSki.gif" width="100%">
+|<img alt="threebox" src="https://i.postimg.cc/FF8LpRX0/Mapbox-Shadow.gif" width="100%">|<img alt="threebox" src="https://i.postimg.cc/6QnjWSVm/Eiffel-Shadow.gif" width="100%">
+
 
 <br>
 
 Only in this fork, there is a list of new features implemented on top of the amazing work from [@peterqliu](https://github.com/peterqliu/threebox/):
-- Updated to [**Three.js r132**](https://github.com/mrdoob/three.js/releases/tag/r132).
-- Updated to **Mapbox-gl-js v2.2.0**.
-- Updated to **Azure Maps v2.0.31**.
+- Updated to **Three.js r127**.
+- Updated to Mapbox-gl-js v1.11.1.
+- Updated to Azure Maps v2.0.31.
 - [+20 examples](https://github.com/jscastro76/threebox/tree/master/examples) with all the new features.
 - Support for multiple 3D format objects (FBX, GLTF/GLB, Collada, OBJ/MTL).
 - Support for 3D extruded shapes from [GeoJson](https://geojson.org/) features or points array.
@@ -66,7 +66,6 @@ Only in this fork, there is a list of new features implemented on top of the ama
 - Support for Object3D embedded animations, and custom animations on AnimationManager (i.e. embedded animation + translate + rotate).
 - Support for multi-layer and multi-floor design of spaces.
 - Support for built-in shadows and real Sun light positioning for a given datetime and lnglat coords.
-- Support for built-in Mapbox v2 Sky and Terrain layer synced with real Sun light.
 - Support for Non-AABB Non Axes Aligned Bounding Box and real model size, including floor projection. 
 - Support for Object3D auto-centering and 9 default anchor positions customizable through adjustments.
 - Support for `setLayerZoomRange` and `setLayoutProperty` on Custom Layers (not available in Mapbox).
@@ -100,9 +99,9 @@ All the [**Threebox Documentation**](/docs/Threebox.md) has been completely upda
 
 ## Compatibility/Dependencies
 
-- [**Three.js 132**](https://github.com/mrdoob/three.js/releases/tag/r132). (already bundled into the Threebox build). If desired, other versions can be swapped in and rebuilt [here](https://github.com/jscastro76/threebox/blob/master/src/three.js), though compatibility is not guaranteed.
-- **Mapbox-gl-js v1.11.1. or v.2.0.1**. **Warning**: Despite v1.11.1 still supported, if used, some features from mapbox v.2.0.1 won't be obviously available such as sky layers. 
-- **Azure Maps v2.0.31.**
+- **Three.js r127** (already bundled into the Threebox build). If desired, other versions can be swapped in and rebuilt [here](https://github.com/jscastro76/threebox/blob/master/src/three.js), though compatibility is not guaranteed.
+- Mapbox-gl-js v1.11.1.
+- Azure Maps v2.0.31.
 
 <br>
 
@@ -114,19 +113,12 @@ You can use threebox in three different ways.
 
 #### NPM install
 Add threebox to your project via **npm package** [![NPM version](http://img.shields.io/npm/v/threebox-plugin.svg?style=flat-square)](https://www.npmjs.org/package/threebox-plugin) :
-```js
-npm install threebox-plugin
-```   
+`npm install threebox-plugin`  
 
 Then you will need to import Threebox object in your code. Depending your javascript framework this might be different. 
 ```js 
-import { Threebox } from 'threebox-plugin'; 
-```  
-Depending the framework, wrapper or bundler you ar using, try with this:
-```js 
 import { Threebox } from 'threebox-plugin/dist/threebox'; 
 ```  
-
 <br/>
 
 #### Use the bundle locally
@@ -144,11 +136,9 @@ Threebox can be also used from different public CDNs:
 ##### jsdelivr
 This CDN has the particularity that always requires the version of the package to download individual files.
 ```html
-<script src="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.2.2/dist/threebox.min.js" type="text/javascript"></script>
-<link href="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.2.2/dist/threebox.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.1.9/dist/threebox.min.js" type="text/javascript"></script>
+<link href="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.1.9/dist/threebox.css" rel="stylesheet" />
 ```
-
-<br/>
 
 ##### unpkg
 Despite this CDN admits version, if omitted, it will download always the last one published.
@@ -158,10 +148,10 @@ Despite this CDN admits version, if omitted, it will download always the last on
 <link href="https://unpkg.com/threebox-plugin/dist/threebox.css" rel="stylesheet" />
 ```
 
-For an specific version (i.e. v2.2.1) use the followin:
+For an specific version (i.e. v2.1.9) use the followin:
 ```html
-<script src="https://unpkg.com/threebox-plugin@2.2.1/dist/threebox.min.js" type="text/javascript"></script>
-<link href="https://unpkg.com/threebox-plugin@2.2.1/dist/threebox.css" rel="stylesheet" />
+<script src="https://unpkg.com/threebox-plugin@2.1.9/dist/threebox.min.js" type="text/javascript"></script>
+<link href="https://unpkg.com/threebox-plugin@2.1.9/dist/threebox.css" rel="stylesheet" />
 ```
 
 <br/>

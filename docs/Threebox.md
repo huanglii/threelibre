@@ -12,7 +12,7 @@ Threebox works by adding a *Three.js* scene to *Mapbox GL*, creating a new *Mapb
 
 ## Examples
 
-Threebox contains [+20 examples](https://github.com/jscastro76/threebox/blob/master/examples/README.md) to showcase most of its features. Check them out to have a glance of what is possible.  
+Threebox contains [+20 examples](https://github.com/jscastro76/threebox/blob/master/examples/readme.md) to showcase most of its features. Check them out to have a glance of what is possible.  
 To run them, create a `config.js` file with your Mapbox-gl-js access token, in the same folder and in the format of [the template](https://github.com/jscastro76/threebox/blob/master/examples/config_template.js).
 
 - [01-basic.html](https://github.com/jscastro76/threebox/blob/master/examples/01-basic.html) 
@@ -35,7 +35,6 @@ To run them, create a `config.js` file with your Mapbox-gl-js access token, in t
 - [18-extrusions.html](https://github.com/jscastro76/threebox/blob/master/examples/18-extrusions.html) 
 - [19-fixedzoom.html](https://github.com/jscastro76/threebox/blob/master/examples/19-fixedzoom.html) 
 - [20-game.html](https://github.com/jscastro76/threebox/blob/master/examples/20-game.html)
-- [21-terrain.html](https://github.com/jscastro76/threebox/blob/master/examples/21-terrain.html) 
 - [Vue.js sample](https://codesandbox.io/s/vue-threebox-sample-8k7mz)
 
 <br>
@@ -50,9 +49,7 @@ You can use threebox in three different ways.
 
 #### NPM install
 Add threebox to your project via **npm package** [![NPM version](http://img.shields.io/npm/v/threebox-plugin.svg?style=flat-square)](https://www.npmjs.org/package/threebox-plugin) :  
-```js
-npm install threebox-plugin
-```  
+`npm install threebox-plugin`  
 
 Then you will need to import Threebox object in your code. Depending your javascript framework this might be different. 
 ```js 
@@ -75,10 +72,9 @@ Threebox can be also used from different public CDNs:
 ##### jsdelivr
 This CDN has the particularity that always requires the version of the package to download individual files.
 ```html
-<script src="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.2.1/dist/threebox.min.js" type="text/javascript"></script>
-<link href="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.1.1/dist/threebox.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.1.9/dist/threebox.min.js" type="text/javascript"></script>
+<link href="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.1.9/dist/threebox.css" rel="stylesheet" />
 ```
-<br/>
 
 ##### unpkg
 Despite this CDN admits version, if omitted, it will download always the last one published.
@@ -88,13 +84,14 @@ Despite this CDN admits version, if omitted, it will download always the last on
 <link href="https://unpkg.com/threebox-plugin/dist/threebox.css" rel="stylesheet" />
 ```
 
-For an specific version (i.e. v2.2.1) use the followin:
+For an specific version (i.e. v2.1.9) use the followin:
 ```html
-<script src="https://unpkg.com/threebox-plugin@2.2.1/dist/threebox.min.js" type="text/javascript"></script>
-<link href="https://unpkg.com/threebox-plugin@2.2.1/dist/threebox.css" rel="stylesheet" />
+<script src="https://unpkg.com/threebox-plugin@2.1.9/dist/threebox.min.js" type="text/javascript"></script>
+<link href="https://unpkg.com/threebox-plugin@2.1.9/dist/threebox.css" rel="stylesheet" />
 ```
 
 <br/>
+
 
 - - -
 
@@ -122,13 +119,10 @@ Sets up a Threebox scene using an [Mapbox map](https://docs.mapbox.com/mapbox-gl
 | `enableSelectingObjects`     | no       | false   | boolean  | Enables the Mouseover and Selection of 3D objects. This will fire the event [`SelectedChange`](#SelectedChange). This value will set the `options.bbx` value of the objects created.|
 | `enableDraggingObjects`     | no       | false   | boolean  | Enables to the option to Drag a 3D object. This will fire the event [`ObjectDragged`](#ObjectDragged) where `draggedAction = 'translate'` or `draggedAction = 'altitude'` |
 | `enableRotatingObjects`     | no       | false   | boolean  | Enables to the option to Drag a 3D object. This will fire the event [`ObjectDragged`](#ObjectDragged)  where `draggedAction = 'rotate'`|
-| `enableTooltips`     | no       | false   | boolean  | Enables the default tooltips on fill-extrusion features and 3D Objects|
-| `enableHelpTooltips`     | no       | false   | boolean  | Enables the default help tooltips when an object is being moved, rotated or measured. |
+| `enableToltips`     | no       | false   | boolean  | Enables the default tooltips on fill-extrusion features and 3D Objects|
 | `multiLayer`     | no       | false   | boolean  | Enables the option for multi layer pages where a default layer will be created internally that will manage the [`tb.update`](#update) calls  |
 | `orthographic`     | no       | false   | boolean  | Enables the option to set a [`THREE.OrthographicCamera`](https://threejs.org/docs/index.html#api/en/cameras/OrthographicCamera) instead of a `THREE.PerspectiveCamera` which is the default in Mapbox  |
 | `fov`     | no       | ThreeboxConstants.FOV_DEGREES | number | Enables to set the FOV of the default [`THREE.PerspectiveCamera`](https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera). This value has no effect if `orthographic: true`  |
-| `sky`    | no       | false      | boolean | It sets a built-in atmospheric layer initially set with the time and the map center position. This layer is automatically updated if `realSunlight` is also true, but it can be updated separately through `tb.updateSunSky(tb.getSunSky())` method call. |
-| `terrain`    | no       | false      | boolean | It sets a built-in terrain layer initially set with the time and the map center position. This layer is automatically updated if `realSunlight` is also true, but it can be updated separately through `tb.updateSunSky(tb.getSunSky())` method call. |
 
 To render Threebox scene, first is needed to create a [CustomLayerInterface](https://docs.mapbox.com/mapbox-gl-js/api/properties/#customlayerinterface), and then add the 3D objects to render at [`onAdd` function](https://www.mapbox.com/mapbox-gl-js/api/#customlayerinterface).  
 Second, you need to call recursively to [`tb.update();`](#update) method from 
@@ -308,22 +302,6 @@ If it receives `true` as a param, it will also call internally `obj.dispose` to 
 
 <br>
 
-#### createSkyLayer 
-```js
-tb.createSkyLayer()
-```
-This internal method creates a new sky atmospheric layer, it's interally used by the property `tb.sky`.
-
-<br>
-
-#### createTerrainLayer 
-```js
-tb.createTerrainLayer()
-```
-This internal method creates a new terrain layer, it's interally used by the property `tb.terrain`.
-
-<br>
-
 
 #### defaultLights 
 ```js
@@ -387,16 +365,6 @@ This method gets Sun light position (azimuth, altitude) based on `suncalc.js.` m
 
 <br>
 
-#### getSunSky 
-```js
-tb.getSunSky(date, sunPos)
-```
-This method gets Sun sky layer position `[azimuth, altitude]` based on `suncalc.js.` module which calculates the sun position for a given date, time, lng, lat combination. 
-If `date` is provided, it will use that, otherwise it will use `new Date()`. If `sunPos` is provided, it will use that, otherwise it will calculate it based on map.getCenter() calling `tb.getSunPosition` method.
-
-<br>
-
-
 #### getSunTimes 
 ```js
 tb.getSunTimes(date, coords)
@@ -451,7 +419,6 @@ Internally, uses [`THREE.OBJLoader`](https://github.com/mrdoob/three.js/blob/dev
 | `tooltip`     | no       | false   | bool  | This param allows to have or not a tooltip, by default is set with the value of `tb.enableTooltips` |
 | `bbox`     | no       | false   | bool  | This param allows to have or not a bounding box, by default is set with the value of `tb.enableSelectingObjects`  |
 | `raycasted`     | no       | true   | bool  | This param allows to hide an object from raycast individually |
-| `clone`     | no       | true   | bool  | This param allows to load an object without cloning it by default, but it will reduce performance because the new object will consume extra memory as no textures will be cloned. Some objects could require full new instances when animations and textures don't work well with cloning, then `clone: false` will solve the problem. By default `clone` param is true. |
 | `defaultAnimation`     | no       | 0   | number  | This allows to assign by param a default animation. Igneored if the object does not contain animations  |
 | `callback`     | yes       | NA   | function  | A function to run after the object loads. The first argument will be the successfully loaded object, and this is normally used to finish the configuration of the model and add it to Threebox scene through `tb.add()` method. 
 
@@ -729,13 +696,6 @@ This method replicates the behaviour of [`map.setLayoutProperty`](https://docs.m
 
 <br>
 
-#### setObjectsScale 
-```js
-tb.setObjectsScale()
-```
-This method scales all the objects from `tb.world.children` that are `fixedZoom`. 
-
-<br>
 
 #### setStyle 
 ```js
@@ -774,30 +734,6 @@ as it's responsible of invoking the [`THREE.WebGLRenderer.render(scene, camera)`
 
 <br>
 
-#### updateLightHelper 
-```js
-tb.updateLightHelper()
-```
-This method updates the poition of `tb.lights.dirLightHelper`, it's needed if we want to see the helper properly render when the light moves.
-
-<br>
-
-#### updateSunGround 
-```js
-tb.updateSunGround(sunPos)
-```
-If `tb.realSunlight` is `true`, this method updates the light over the satellite style (if applied) according to the sun altitude.
-
-<br>
-
-#### updateSunSky 
-```js
-tb.updateSunSky(sunPos)
-```
-If `tb.sky` is `true`, this method updates the sky atmospheric layer with the received sun position.
-
-<br>
-
 #### unprojectFromWorld 
 ```js
 tb.unprojectFromWorld(Vector3): lnglat
@@ -829,16 +765,6 @@ In all the samples below, the instance of the Threebox will be always referred a
 tb.altitudeStep : Number
 ```
 This get/set property receives and returns the size in meters of the step to use when an object is dragged vertically. By default this is set to 0.1 = 10cm.
-
-<br>
-
-
-#### defaultCursor
-
-```js
-tb.defaultCursor : string
-```
-This get/set property receives and returns the value of the default cursor for the map canvas container `this.getCanvasContainer().style.cursor`, initally set to `'default'`.
 
 <br>
 
@@ -998,29 +924,6 @@ This get/set property receives and returns the size in degrees of the step to us
 
 <br>
 
-#### sky
-
-```js
-tb.sky: Boolean
-```
-By default is `false`. This property is set by the init param `sky: true` in threebox constructor. 
-This get/set property sets and returns the option to have a built-in atmospheric layer initially set with the time and the map center position.   
-This layer is automatically updated if `realSunlight` is also true, but it can be updated separately through `tb.updateSunSky(tb.getSunSky())` method call. 
-If this property is set to `false` after the atmospheric sky layer is created, it will remove the layer. 
-
-<br>
-
-#### terrain
-
-```js
-tb.terrain: Boolean
-```
-By default is `false`. This property is set by the init param `terrain: true` in threebox constructor. 
-This get/set property sets and returns the option to have a built-in terrain layer. 
-This layer is automatically updated if `realSunlight` is also true, adjusting it's light but it can be updated separately through `tb.updateSunGround(tb.getSunPosition())` method call. 
-If this property is set to `false` after the terrain layer is created, it will remove the layer. 
-
-<br>
 
 ## Objects
 
@@ -1076,7 +979,7 @@ Add a extruded shape to the map. Internally, calls `THREE.ExtrudeBufferGeometry`
 | `units`    | no       | `scene`      | string ("scene" or "meters") | Units with which to interpret the object's vertices. If meters, Threebox will also rescale the object with changes in latitude, to appear to scale with objects and geography nearby.|
 | `scale`     | no       | 1   | number or {x, y, z}  | Scale of the object along the three axes, to size it appropriately before future transformations. Note that future scaling applies atop this transformation, rather than overwriting it. `scale` attribute must be provided in number or per axis ((i.e. for an object transformed to 3 times higher than it's default size  `scale: {x: 1, y: 1, z: 3}`|
 | `rotation`     | no       | 0   | number or {x, y, z}  | Rotation of the object along the three axes, to align it to desired orientation before future rotations. Note that future rotations apply atop this transformation, and do not overwrite it. `rotate` attribute must be provided in number or per axis ((i.e. for an object rotated 90 degrees over the x axis `rotation: {x: 90, y: 0, z: 0}`|
-| `materials`     | no       | `THREE.MeshPhongMaterial({ color: 0x660000, side: THREE.DoubleSide })`   | threeMaterial or threeMaterials array  | [THREE material](https://github.com/mrdoob/three.js/tree/master/src/materials) to use. Can be invoked with a text string, or a predefined material object via THREE itself.|   
+| `materials`     | no       | null   | threeMaterial or threeMaterials array  | [THREE material](https://github.com/mrdoob/three.js/tree/master/src/materials) to use. Can be invoked with a text string, or a predefined material object via THREE itself.|   
 | `anchor`     | no       | `bottom-left`   | string | This param will position the pivotal center of the 3D models to the coords it's positioned. This could have the following values `top`, `bottom`, `left`, `right`, `center`, `top-left`, `top-right`, `bottom-left`, `bottom-right`. Default value is `bottom-left` |
 | `adjustment`     | no       | 1   | {x, y, z}  | For geometries the center is by default {0,0,0} position, this is the point to be used for location and for rotation. For perfect positioning and heigth from floor calculations this could be redefined in normalized units, `adjustment` param must be provided in units per axis (i.e. `adjustment: {x: -0.5, y: -0.5, z: 0}` , so the model will correct the center position of the object minus half of the x axis length and minus half of the y axis length ). If you position a cube created throuhg this method with by default center in a concrete `lnglat`on 0 height, half of the cube will be below the ground map level and the object will position at it's `{x,y}` center, so you can define `adjustment: { x: -0.5, y: -0.5, z: 0.5 }` to change the center to the bottom-left corner and that corner will be exactly in the `lnglat` position at the ground level. |
 | `tooltip`     | no       | false   | bool  | This param allows to have or not a tooltip, by default is set with the value of `tb.enableTooltips` |
@@ -1217,7 +1120,7 @@ Internally this method uses a `CSS2DObject` rendered by [`THREE.CSS2DRenderer`](
 
 #### addHelp
 ```js
-obj.addHelp(helpText [,objName = helpName, mapboxStyle = false, center = obj.anchor, height = 0])
+obj.addHelp(helpText [,objName = helpName, mapboxSyle = false, center = obj.anchor, height = 0])
 ```
 This method creates a browser-like help tooltip instance that is accessible through `obj.help`. 
 This help tooltip is only visible when an object is being dragged for a translation, rotation or altitude change. 
@@ -1248,7 +1151,7 @@ Internally this method calls `obj.drawLabelHTML` to create the needed HTML to wr
 
 #### addTooltip
 ```js
-obj.addTooltip(tooltipText [, mapboxStyle = false, center = obj.anchor, custom = true, height = 1])
+obj.addTooltip(tooltipText [, mapboxSyle = false, center = obj.anchor, custom = true, height = 1])
 ```
 This method creates a browser-like tooltip for the object using the tooltipText. 
 If `mapboxStyle` is true, it applies the same styles the *Mapbox GL* popups.
@@ -1468,7 +1371,7 @@ This get/set property receives and returns a [`THREE.Box3Helper`](https://threej
 
 By Threebox design `.boundingBox` is hidden for [`THREE.Raycaster`](https://threejs.org/docs/#api/en/core/Raycaster) even when it's visible for the camera.
 
-*TODO: In next versions of Threebox, this object material will be configurable. In this versiÃ³n still predefined in Objects.prototype*
+*TODO: In next versions of Threebox, this object material will be configurable. In this versión still predefined in Objects.prototype*
 
 <br>
 
@@ -1482,7 +1385,7 @@ This get/set property receives and returns a [`THREE.Box3Helper`](https://threej
 
 By Threebox design `.boundingBoxShadow` is hidden for [`THREE.Raycaster`](https://threejs.org/docs/#api/en/core/Raycaster) even when it's visible for the camera.
 
-*TODO: In next versions of Threebox, this object material will be configurable. In this versiÃ³n still predefined in Objects.prototype*
+*TODO: In next versions of Threebox, this object material will be configurable. In this versión still predefined in Objects.prototype*
 
 <br>
 
@@ -1512,15 +1415,6 @@ This method calls [`color.setHex`](https://threejs.org/docs/?q=color#api/en/math
 obj.help : CSS2DObject
 ```
 This get property returns a `CSS2DObject`[`THREE.CSS2DObject`](https://threejs.org/docs/index.html#examples/en/renderers/CSS2DRenderer) value that represents the help tooltip of a [`THREE.Object3D`](https://threejs.org/docs/#api/en/core/Object3D) created by `obj.addHelp` method, where the value of a rotation, translation or altitude change is shown while dragging. Despite this is accessible, this is an internal object only visible on drag&drop actions over an object.
-
-<br>
-
-#### hidden
-
-```js
-obj.hidden : boolean
-```
-This get/set property receives and returns the value of the hidden status of an object. This property overrides the value of `obj.visibility`.
 
 <br>
 
@@ -1599,7 +1493,7 @@ obj.visibility : boolean
 ```
 This get/set property receives and returns a boolean value to override the property `visible` of a  [`THREE.Object3D`](https://threejs.org/docs/#api/en/core/Object3D.visible), 
 adding also the same visibility value for `obj.label` and `obj.tooltip`
-This property is overriden by `obj.hidden`, so if `obj.hidden` is false, `obj.visibility` is ignored.
+
 By Threebox design `.boundingBoxShadow` is hidden for [`THREE.Raycaster`](https://threejs.org/docs/#api/en/core/Raycaster) even when it's visible for the camera.
 
 

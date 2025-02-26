@@ -49,8 +49,6 @@ Threebox.prototype = {
 
 		this.objects = new Objects();
 
-		this.mapboxVersion = parseFloat(this.map.version); 
-
 		// Set up a THREE.js scene
 		this.renderer = new THREE.WebGLRenderer({
 			alpha: true,
@@ -93,42 +91,21 @@ Threebox.prototype = {
 		this.rotationStep = 5;// degrees step size for rotation
 		this.gridStep = 6;// decimals to adjust the lnglat grid step, 6 = 11.1cm
 		this.altitudeStep = 0.1; // 1px = 0.1m = 10cm
-		this.defaultCursor = 'default';
 
 		this.lights = this.initLights;
 		if (this.options.defaultLights) this.defaultLights();
 		if (this.options.realSunlight) this.realSunlight(this.options.realSunlightHelper);
-		this.skyLayerName = 'sky-layer';
-		this.terrainSourceName = 'mapbox-dem';
-		this.terrainExaggeration = 1.0;
-		this.terrainLayerName = '';
 		this.enableSelectingFeatures = this.options.enableSelectingFeatures || false;
 		this.enableSelectingObjects = this.options.enableSelectingObjects || false;
 		this.enableDraggingObjects = this.options.enableDraggingObjects || false;
 		this.enableRotatingObjects = this.options.enableRotatingObjects || false;
 		this.enableTooltips = this.options.enableTooltips || false;
 		this.multiLayer = this.options.multiLayer || false;
-		this.enableHelpTooltips = this.options.enableHelpTooltips || false;
 
 		this.map.on('style.load', function () {
 			this.tb.zoomLayers = [];
 			//[jscastro] if multiLayer, create a by default layer in the map, so tb.update won't be needed in client side to avoid duplicating calls to render
 			if (this.tb.options.multiLayer) this.addLayer({ id: "threebox_layer", type: 'custom', renderingMode: '3d', map: this, onAdd: function (map, gl) { }, render: function (gl, matrix) { this.map.tb.update(); } })
-
-			this.once('idle', () => {
-				this.tb.setObjectsScale();
-			});
-
-			if (this.tb.options.sky) {
-				this.tb.sky = true;
-			}
-			if (this.tb.options.terrain) {
-				this.tb.terrain = true;
-			}
-			let rasterLayers = ['satellite', 'mapbox-mapbox-satellite', 'satelliteLayer'];
-			rasterLayers.forEach((l) => {
-				if (this.getLayer(l)) this.tb.terrainLayerName = l;
-			})
 		});
 
 		//[jscastro] new event map on load
@@ -143,7 +120,7 @@ Threebox.prototype = {
 			this.overedFeature; //overed state for extrusion layer features
 
 			let canvas = this.getCanvasContainer();
-			this.getCanvasContainer().style.cursor = this.tb.defaultCursor;
+			this.getCanvasContainer().style.cursor = 'default';
 			// Variable to hold the starting xy coordinates
 			// when 'mousedown' occured.
 			let start;
@@ -325,7 +302,7 @@ Threebox.prototype = {
 				// Capture the ongoing xy coordinates
 				let current = mousePos(e);
 
-				this.getCanvasContainer().style.cursor = this.tb.defaultCursor;
+				this.getCanvasContainer().style.cursor = 'default';
 				//check if being rotated
 				if (e.originalEvent.altKey && this.draggedObject) {
 
@@ -341,7 +318,7 @@ Threebox.prototype = {
 					let rotation = { x: 0, y: 0, z: (Math.round(rotationDiff[2] + (~~((current.x - start.x) / this.tb.rotationStep) % 360 * this.tb.rotationStep) % 360)) };
 					//now rotate the model depending the axis
 					this.draggedObject.setRotation(rotation);
-					if (map.tb.enableHelpTooltips) this.draggedObject.addHelp("rot: " + rotation.z + "&#176;");
+					this.draggedObject.addHelp("rot: " + rotation.z + "&#176;");
 					//this.draggedObject.setRotationAxis(rotation);
 					return;
 				}
@@ -357,7 +334,7 @@ Threebox.prototype = {
 					let coords = e.lngLat;
 					let options = [Number((coords.lng + lngDiff).toFixed(this.tb.gridStep)), Number((coords.lat + latDiff).toFixed(this.tb.gridStep)), this.draggedObject.modelHeight];
 					this.draggedObject.setCoords(options);
-					if (map.tb.enableHelpTooltips) this.draggedObject.addHelp("lng: " + options[0] + "&#176;, lat: " + options[1] + "&#176;");
+					this.draggedObject.addHelp("lng: " + options[0] + "&#176;, lat: " + options[1] + "&#176;");
 					return;
 				}
 
@@ -371,7 +348,7 @@ Threebox.prototype = {
 					let now = (e.point.y * this.tb.altitudeStep);
 					let options = [this.draggedObject.coordinates[0], this.draggedObject.coordinates[1], Number((- now - altDiff).toFixed(this.tb.gridStep))];
 					this.draggedObject.setCoords(options);
-					if (map.tb.enableHelpTooltips) this.draggedObject.addHelp("alt: " + options[2] + "m");
+					this.draggedObject.addHelp("alt: " + options[2] + "m");
 					return;
 				}
 
@@ -391,12 +368,9 @@ Threebox.prototype = {
 						this.outFeature(this.overedFeature);
 						this.getCanvasContainer().style.cursor = 'pointer';
 						if (!this.selectedObject || nearestObject.uuid != this.selectedObject.uuid) {
-							if (this.overedObject && this.overedObject.uuid != nearestObject.uuid) {
+							if (this.overedObject && this.overedObject.uuid != nearestObject.uuid ) {
 								this.outObject();
 							}
-							nearestObject.over = true;
-							this.overedObject = nearestObject;
-						} else if (this.selectedObject && nearestObject.uuid == this.selectedObject.uuid) {
 							nearestObject.over = true;
 							this.overedObject = nearestObject;
 						}
@@ -466,7 +440,7 @@ Threebox.prototype = {
 			this.onMouseUp = function (e) {
 
 				// Set a UI indicator for dragging.
-				this.getCanvasContainer().style.cursor = this.tb.defaultCursor;
+				this.getCanvasContainer().style.cursor = 'default';
 
 				// Remove these events now that finish has been called.
 				//map.off('mousemove', onMouseMove);
@@ -486,7 +460,7 @@ Threebox.prototype = {
 				if (this.overedFeature) {
 					let features = this.queryRenderedFeatures(e.point);
 					if (features.length > 0 && this.overedFeature.id != features[0].id) {
-						this.getCanvasContainer().style.cursor = this.tb.defaultCursor;
+						this.getCanvasContainer().style.cursor = 'default';
 						//only unover when new feature is another
 						this.outFeature(features[0]);
 					}
@@ -495,7 +469,7 @@ Threebox.prototype = {
 
 			this.onZoom = function (e) {
 				this.tb.zoomLayers.forEach((l) => { this.tb.toggleLayer(l); });
-				this.tb.setObjectsScale();
+				this.tb.world.children.filter(o => (o.fixedZoom != null)).forEach((o) => { o.setObjectScale(this.transform.scale); });
 			}
 
 			let ctrlDown = false;
@@ -520,7 +494,7 @@ Threebox.prototype = {
 							sf = dc(sf, 7);
 						}
 
-						if (map.tb.enableHelpTooltips) obj.addHelp("size(m): " + dc((s.x / sf), 3) + " W, " + dc((s.y / sf), 3) + " L, " + dc((s.z / sf), 3) + " H");
+						obj.addHelp("size(m): " + dc((s.x / sf), 3) + " W, " + dc((s.y / sf), 3) + " L, " + dc((s.z / sf), 3) + " H");
 						this.repaint = true;
 					}
 					else {
@@ -543,43 +517,12 @@ Threebox.prototype = {
 			this.on('mouseout', this.onMouseOut)
 			this.on('mousedown', this.onMouseDown);
 			this.on('zoom', this.onZoom);
-			this.on('zoomend', this.onZoom);
 
 			document.addEventListener('keydown', onKeyDown.bind(this), true);
 			document.addEventListener('keyup', onKeyUp.bind(this));
 
 		});
 
-	},
-
-	//[jscastro] added property to manage an athmospheric sky layer
-	get sky() { return this.options.sky; },
-	set sky(value) {
-		if (value) {
-			this.createSkyLayer();
-		}
-		else {
-			this.removeLayer(this.skyLayerName);
-		}
-		this.options.sky = value;
-	},
-
-	//[jscastro] added property to manage an athmospheric sky layer
-	get terrain() { return this.options.terrain; },
-	set terrain(value) {
-		this.terrainLayerName = '';
-		if (value) {
-			this.createTerrainLayer();
-		}
-		else {
-			if (this.mapboxVersion < 2.0) { console.warn("Terrain layer are only supported by Mapbox-gl-js > v2.0"); return };
-
-			if (this.map.getTerrain()) {
-				this.map.setTerrain(null); //
-				this.map.removeSource(this.terrainSourceName);
-			}
-		}
-		this.options.terrain = value;
 	},
 
 	//[jscastro] added property to manage FOV for perspective camera
@@ -619,65 +562,6 @@ Threebox.prototype = {
 
 	},
 
-	//[jscastro] method to create an athmospheric sky layer
-	createSkyLayer: function () {
-		if (this.mapboxVersion < 2.0) { console.warn("Sky layer are only supported by Mapbox-gl-js > v2.0"); this.options.sky = false; return };
-
-		let layer = this.map.getLayer(this.skyLayerName);
-		if (!layer) {
-			this.map.addLayer({
-				'id': this.skyLayerName,
-				'type': 'sky',
-				'paint': {
-					'sky-opacity': [
-						'interpolate',
-						['linear'],
-						['zoom'],
-						0,
-						0,
-						5,
-						0.3,
-						8,
-						1
-					],
-					// set up the sky layer for atmospheric scattering
-					'sky-type': 'atmosphere',
-					// explicitly set the position of the sun rather than allowing the sun to be attached to the main light source
-					'sky-atmosphere-sun': this.getSunSky(this.lightDateTime),
-					// set the intensity of the sun as a light source (0-100 with higher values corresponding to brighter skies)
-					'sky-atmosphere-sun-intensity': 10
-				}
-			});
-
-			this.map.once('idle', () => {
-				this.setSunlight();
-				this.repaint();
-			});
-		}
-	},
-
-	//[jscastro] method to create a terrain layer
-	createTerrainLayer: function () {
-		if (this.mapboxVersion < 2.0) { console.warn("Terrain layer are only supported by Mapbox-gl-js > v2.0"); this.options.terrain = false; return };
-		let layer = this.map.getTerrain();
-		if (!layer) {
-			// add the DEM source as a terrain layer with exaggerated height
-			this.map.addSource(this.terrainSourceName, {
-				'type': 'raster-dem',
-				'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-				'tileSize': 512,
-				'maxzoom': 14
-			});
-			this.map.setTerrain({ 'source': this.terrainSourceName, 'exaggeration': this.terrainExaggeration });
-			this.map.once('idle', () => {
-				//alert("idle");
-				this.cameraSync.updateCamera();
-				this.repaint();
-			});
-
-		}
-	},
-
 	// Objects
 	sphere: function (options) {
 		this.setDefaultView(options, this.options);
@@ -707,41 +591,31 @@ Threebox.prototype = {
 
 	loadObj: async function loadObj(options, cb) {
 		this.setDefaultView(options, this.options);
-		if (options.clone === false) {
-			return new Promise(
-				async (resolve) => {
-					loader(options, cb, async (obj) => {
-						resolve(obj);
-					});
+		//[jscastro] new added cache for 3D Objects
+		let cache = this.objectsCache.get(options.obj);
+		if (cache) {
+			cache.promise
+				.then(obj => {
+					cb(obj.duplicate(options));
+				})
+				.catch(err => {
+					this.objectsCache.delete(options.obj);
+					console.error("Could not load model file: " + options.obj);
 				});
-		}
-		else {
-			//[jscastro] new added cache for 3D Objects
-			let cache = this.objectsCache.get(options.obj);
-			if (cache) {
-				cache.promise
-					.then(obj => {
-						cb(obj.duplicate(options));
+		} else {
+			this.objectsCache.set(options.obj, {
+				promise: new Promise(
+					async (resolve, reject) => {
+						loader(options, cb, async (obj) => {
+							if (obj.duplicate) {
+								resolve(obj.duplicate());
+							} else {
+								reject(obj);
+							}
+						});
 					})
-					.catch(err => {
-						this.objectsCache.delete(options.obj);
-						console.error("Could not load model file: " + options.obj);
-					});
-			} else {
-				this.objectsCache.set(options.obj, {
-					promise: new Promise(
-						async (resolve, reject) => {
-							loader(options, cb, async (obj) => {
-								if (obj.duplicate) {
-									resolve(obj.duplicate());
-								} else {
-									reject(obj);
-								}
-							});
-						})
-				});
+			});
 
-			}
 		}
 	},
 
@@ -822,7 +696,12 @@ Threebox.prototype = {
 		this.map.setLayoutProperty(layerId, name, value);
 		if (value !== null && value !== undefined) {
 			if (name === 'visibility') {
-				this.world.children.filter(o => (o.layer === layerId)).forEach((o) => { o.visibility = value });
+				this.world.children.forEach(function (obj) {
+					if (obj.layer === layerId) {
+						obj.visibility = value;
+					}
+				});
+				return;
 			}
 		}
 	},
@@ -858,11 +737,6 @@ Threebox.prototype = {
 				}
 			});
 		}
-	},
-
-	//[jscastro] method to set globally all the objects that are fixedScale
-	setObjectsScale: function () {
-		this.world.children.filter(o => (o.fixedZoom != null)).forEach((o) => { o.setObjectScale(this.map.transform.scale); });
 	},
 
 	//[jscastro] mapbox setStyle removes all the layers, including custom layers, so tb.world must be cleaned up too
@@ -906,7 +780,9 @@ Threebox.prototype = {
 		this.updateLightHelper();
 
 		// Render the scene and repaint the map
-		this.renderer.resetState(); //update threejs r126
+		//this.renderer.state.reset();
+		this.renderer.resetState();
+		//if (this.options.realSunlight) this.renderer.state.setBlending(THREE.NormalBlending);
 		this.renderer.render(this.scene, this.camera);
 
 		// [jscastro] Render any label
@@ -979,7 +855,7 @@ Threebox.prototype = {
 
 	//[jscastro] get the sun position (azimuth, altitude) from a given datetime, lng, lat
 	getSunPosition: function (date, coords) {
-		return SunCalc.getPosition(date || Date.now(), coords[1], coords[0]);  
+		return SunCalc.getPosition(date, coords[1], coords[0]);  
 	},
 
 	//[jscastro] get the sun times for sunrise, sunset, etc.. from a given datetime, lng, lat and alt
@@ -1035,47 +911,20 @@ Threebox.prototype = {
 
 		this.lights.dirLight.position.set(azSin, azCos, alt);
 		this.lights.dirLight.position.multiplyScalar(radius);
-		this.lights.dirLight.intensity = Math.max(alt, 0);
-		this.lights.hemiLight.intensity = Math.max(alt * 1, 0.1);
+		this.lights.dirLight.intensity = Math.max(alt, -0.15);
+		//this.lights.hemiLight.intensity = alt * 0.6;
 		//console.log("Intensity:" + this.lights.dirLight.intensity);
 		this.lights.dirLight.updateMatrixWorld();
 		this.updateLightHelper();
 		if (this.map.loaded()) {
-			this.updateSunGround(this.sunPosition);
 			this.map.setLight({
 				anchor: 'map',
-				position: [3, 180 + this.sunPosition.azimuth * 180 / Math.PI, 90 - this.sunPosition.altitude * 180 / Math.PI],
-				intensity: Math.cos(this.sunPosition.altitude), //0.4,
-				color: `hsl(40, ${50 * Math.cos(this.sunPosition.altitude)}%, ${Math.max(20, 20 + (96 * Math.sin(this.sunPosition.altitude)))}%)`
-
+				position: [1.5, 180 + this.sunPosition.azimuth * 180 / Math.PI, 90 - this.sunPosition.altitude * 180 / Math.PI],
+				'position-transition': { duration: 0 },
+				//color: '#fdb'
+				color: `hsl(40, ${50 * Math.cos(this.sunPosition.altitude)}%, ${96 * Math.sin(this.sunPosition.altitude)}%)`
 			}, { duration: 0 });
-			if (this.sky) { this.updateSunSky(this.getSunSky(date, this.sunPosition));}
-		}
-	},
-
-	getSunSky: function (date, sunPos) {
-		if (!sunPos) {
-			var center = this.map.getCenter();
-			sunPos = this.getSunPosition(
-				date || Date.now(), [center.lng, center.lat]
-			);
-		}
-		var sunAzimuth = 180 + (sunPos.azimuth * 180) / Math.PI;
-		var sunAltitude = 90 - (sunPos.altitude * 180) / Math.PI;
-		return [sunAzimuth, sunAltitude];
-	},
-
-	updateSunSky: function (sunPos) {
-		if (this.sky) {
-			// update the `sky-atmosphere-sun` paint property with the position of the sun based on the selected time
-			this.map.setPaintProperty(this.skyLayerName, 'sky-atmosphere-sun', sunPos);
-		}
-	},
-
-	updateSunGround: function (sunPos) {
-		if (this.terrainLayerName != '') {
-			// update the raster layer paint property with the position of the sun based on the selected time
-			this.map.setPaintProperty(this.terrainLayerName, 'raster-opacity', Math.max(Math.min(1, sunPos.altitude * 4), 0.25));
+			//console.log(pos.altitude);
 		}
 	},
 
@@ -1100,6 +949,7 @@ Threebox.prototype = {
 					this.map.remove();
 					this.map = {};
 					this.scene.remove(this.world);
+					this.scene.dispose();
 					this.world.children = [];
 					this.world = null;
 					this.objectsCache.clear();
@@ -1157,11 +1007,6 @@ Threebox.prototype = {
 		this.scene.add(this.lights.hemiLight);
 		this.setSunlight();
 
-		this.map.once('idle', () => {
-			this.setSunlight();
-			this.repaint();
-		});
-
 	},
 
 	setDefaultView: function (options, defOptions) {
@@ -1174,7 +1019,7 @@ Threebox.prototype = {
 
 	programs: function () { return this.renderer.info.programs.length },
 
-	version: '2.2.7',
+	version: '2.2.1',
 
 }
 
@@ -1189,12 +1034,9 @@ var defaultOptions = {
 	enableDraggingObjects: false,
 	enableRotatingObjects: false,
 	enableTooltips: false,
-	enableHelpTooltips: false,
 	multiLayer: false,
 	orthographic: false,
-	fov: ThreeboxConstants.FOV_DEGREES,
-	sky: false,
-	terrain: false
+	fov: ThreeboxConstants.FOV_DEGREES
 }
 module.exports = exports = Threebox;
 
