@@ -2,8 +2,8 @@
 <html>
 <head>
 	<title>Threebox Statue of Liberty and Eiffel Tower</title>
-	<script src="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js"></script>
-	<link href="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css" rel="stylesheet" />
+	<link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' />
+	<script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
 	<script src="../dist/threebox.js" type="text/javascript"></script>
 	<link href="../dist/threebox.css" rel="stylesheet" />
 	<script src="plugins/jquery.min.js" type="text/javascript"></script>
@@ -52,12 +52,11 @@
 		}
 	</style>
 
-	<script src="config.js"></script>
 </head>
 <body>
 	<div id='map' class='map'>
-		<div class="mapboxgl-ctrl-top-left">
-			<div id="toolsControl" class="tools-i mapboxgl-ctrl mapboxgl-ctrl-group btn-group btn-group-toggle" style="margin-left:120px;" data-toggle="buttons">
+		<div class="maplibregl-ctrl-top-left">
+			<div id="toolsControl" class="tools-i maplibregl-ctrl maplibregl-ctrl-group btn-group btn-group-toggle" style="margin-left:120px;" data-toggle="buttons">
 				<!--<button type="button" name="ALL" id="ALL" title="All" alt="All"><i class="fas fa-globe-americas"></i></button>-->
 				<button type="button" name="NYC" id="NYC" title="Statue of Liberty, NYC" alt="Statue of Liberty, NYC"><i style="width: 26px; height: 26px; background: url(./images/statue-of-liberty.png) no-repeat center center; background-size: contain; display: block;"></i></button>
 				<button type="button" name="PAR" id="PAR" title="Eiffel Tower, Paris" alt="Eiffel Tower, Paris"><i style="width: 26px; height: 26px; background: url(./images/eiffel-tower.png) no-repeat center center; background-size: contain; display: block;"></i></button>
@@ -65,7 +64,7 @@
 			<div style="width:150px;display: inline-block;background: rgba(0, 0, 0, 0.5);border-radius: 3px;color: white;">Icons made by <a href="" title="monkik">monkik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 		</div>
 	</div>
-	<div id="hour" class="mapboxgl-map"></div>
+	<div id="hour" class="maplibregl-map"></div>
 	<input id='time' type='range' min="0" max="86400" />
 	<script type="module">
 		//This demo shows a satellite mapbox style the following features:
@@ -74,9 +73,7 @@
 		//- Built-in raycasting and selection through 'enableSelectingObjects' <br />
 		//- Built-in Tooltips on for through 'enableTooltips' <br />
 
-		if (!config) console.error("Config not set! Make a copy of 'config_template.js', add in your access token, and save the file as 'config.js'.");
 
-		mapboxgl.accessToken = config.accessToken;
 
 		//starting location for map
 		let popup;
@@ -99,13 +96,13 @@
 		let p = document.querySelector("#hour");
 
 		let styles = {
-			day: 'satellite-v9',
-			night: 'dark-v10'
+			day: 'satellite',
+			night: 'dark'
 		}
 		let selectedStyle = styles.night;
 
-		var map = new mapboxgl.Map({
-			style: 'mapbox://styles/mapbox/' + selectedStyle, //'mapbox://styles/mapbox/satellite-v9',
+		var map = new maplibregl.Map({
+			style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + selectedStyle + '.json',
 			center: point.center,
 			zoom: point.zoom,
 			pitch: point.pitch,
@@ -114,10 +111,10 @@
 			antialias: true ,	hash: true
 		});
 
-		map.addControl(new mapboxgl.NavigationControl());
+		map.addControl(new maplibregl.NavigationControl());
 		// Add geolocate control to the map.
 		map.addControl(
-			new mapboxgl.GeolocateControl({
+			new maplibregl.GeolocateControl({
 				positionOptions: {
 					enableHighAccuracy: true
 				},

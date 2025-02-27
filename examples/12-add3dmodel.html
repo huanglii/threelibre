@@ -4,9 +4,8 @@
 	<title>Add a 3D model with Threebox</title>
 	<script src="../dist/threebox.js" type="text/javascript"></script>
 	<link href="../dist/threebox.css" rel="stylesheet" />
-	<script src="config.js"></script>
-	<script src="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js"></script>
-	<link href="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css" rel="stylesheet" />
+	<link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' />
+	<script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
 	<style>
 		body, html {
 			width: 100%;
@@ -51,19 +50,16 @@
 	<div id="hour" class="mapboxgl-map"></div>
 
 	<script type="module">
-		if (!config) console.error("Config not set! Make a copy of 'config_template.js', add in your access token, and save the file as 'config.js'.");
-
-		mapboxgl.accessToken = config.accessToken;
 
 		let styles = {
-			day: 'light-v10', 
-			night: 'dark-v10'
+			day: 'light', 
+			night: 'dark'
 		}
 		let selectedStyle = styles.day;
 
-		var map = (window.map = new mapboxgl.Map({
+		var map = (window.map = new maplibregl.Map({
 			container: 'map',
-			style: 'mapbox://styles/mapbox/' + selectedStyle,
+			style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + selectedStyle + '.json',
 			zoom: 18,
 			center: [148.9819, -35.3981],
 			pitch: 60,
@@ -149,19 +145,19 @@
 			map.getContainer().appendChild(stats.dom);
 			animate();
 
-			map.addLayer(createCustomLayer('3d-model', modelOrigin), 'waterway-label');
+			map.addLayer(createCustomLayer('3d-model', modelOrigin), 'label_cn_province');
 		});
 
 		function changeStyleWithDaylight(date, origin) {
 			let sunTimes = tb.getSunTimes(date, origin);
 			if (date >= sunTimes.sunriseEnd && date <= sunTimes.sunsetStart) {
 				if (selectedStyle != styles.day) {
-					tb.setStyle("mapbox://styles/mapbox/" + styles.day);
+					tb.setStyle('https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + styles.night + '.json');
 					selectedStyle = styles.day;
 				}
 			} else {
 				if (selectedStyle != styles.night) {
-					tb.setStyle("mapbox://styles/mapbox/" + styles.night);
+					tb.setStyle('https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + styles.night + '.json');
 					selectedStyle = styles.night;
 				}
 			}
