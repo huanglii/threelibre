@@ -1824,13 +1824,12 @@ function CameraSync(map, camera, world) {
 
     // Listen for move events from the map and update the Three.js camera
     let _this = this; // keep the function on _this
-    this.map
-        .on('move', function () {
-            _this.updateCamera();
-        })
-        .on('resize', function () {
-            _this.setupCamera();
-        })
+    this.map.on('move', function () {
+        _this.updateCamera();
+    })
+    this.map.on('resize', function () {
+        _this.setupCamera();
+    })
 
     this.setupCamera();
 }
@@ -1838,14 +1837,14 @@ function CameraSync(map, camera, world) {
 CameraSync.prototype = {
     setupCamera: function () {
         //console.log("setupCamera");
-        this.state.fov = this.map.transform._fov;
+        this.state.fov = this.map.transform.fovInRadians;
         const t = this.map.transform;
         this.camera.aspect = t.width / t.height; //bug fixed, if aspect is not reset raycast will fail on map resize
         this.camera.updateProjectionMatrix();
         this.halfFov = this.state.fov / 2;
-        const offset = { x: t.width / 2, y: t.height / 2 };//t.centerOffset;
+        const offset = t.centerOffset;
         const cameraToCenterDistance = 0.5 / Math.tan(this.halfFov) * t.height;
-        const maxPitch = t._maxPitch * Math.PI / 180;
+        const maxPitch = t.maxPitch * Math.PI / 180;
         this.acuteAngle = Math.PI / 2 - maxPitch;
 
         this.state.cameraToCenterDistance = cameraToCenterDistance;
@@ -1865,11 +1864,11 @@ CameraSync.prototype = {
 
         // Furthest distance optimized by @jscastro76
         const t = this.map.transform;
-        const groundAngle = Math.PI / 2 + t._pitch;
+        const groundAngle = Math.PI / 2 + t.pitchInRadians;
         this.cameraToCenterDistance = 0.5 / Math.tan(this.halfFov) * t.height;
         this.state.cameraTranslateZ = new THREE.Matrix4().makeTranslation(0, 0, this.cameraToCenterDistance);
         const topHalfSurfaceDistance = Math.sin(this.halfFov) * this.state.cameraToCenterDistance / Math.sin(Math.PI - groundAngle - this.halfFov);
-        const pitchAngle = Math.cos((Math.PI / 2) - t._pitch); //pitch seems to influence heavily the depth calculation and cannot be more than 60 = PI/3
+        const pitchAngle = Math.cos((Math.PI / 2) - t.pitchInRadians); //pitch seems to influence heavily the depth calculation and cannot be more than 60 = PI/3
 
         // Calculate z distance of the farthest fragment that should be rendered. 
         const furthestDistance = pitchAngle * topHalfSurfaceDistance + this.state.cameraToCenterDistance;
@@ -1891,7 +1890,7 @@ CameraSync.prototype = {
         }
         // Unlike the Mapbox GL JS camera, separate camera translation and rotation out into its world matrix
         // If this is applied directly to the projection matrix, it will work OK but break raycasting
-        let cameraWorldMatrix = this.calcCameraMatrix(t._pitch, t.angle);
+        let cameraWorldMatrix = this.calcCameraMatrix(t.pitchInRadians, -t.bearingInRadians);
         this.camera.matrixWorld.copy(cameraWorldMatrix);
 
         let zoomPow = t.scale * this.state.worldSizeRatio;
@@ -1902,8 +1901,8 @@ CameraSync.prototype = {
 
         scale.makeScale(zoomPow, zoomPow, zoomPow);
 
-        let x = t.x || t.point.x;
-        let y = t.y || t.point.y;
+        let x = t.cameraPosition[0];
+        let y = t.cameraPosition[1];
         translateMap.makeTranslation(-x, y, 0);
         rotateMap.makeRotationZ(Math.PI);
 
@@ -1918,8 +1917,8 @@ CameraSync.prototype = {
 
     calcCameraMatrix(pitch, angle, trz) {
         const t = this.map.transform;
-        const _pitch = (pitch === undefined) ? t._pitch : pitch;
-        const _angle = (angle === undefined) ? t.angle : angle;
+        const _pitch = (pitch === undefined) ? t.pitchInRadians : pitch;
+        const _angle = (angle === undefined) ? -t.bearingInRadians : angle;
         const _trz = (trz === undefined) ? this.state.cameraTranslateZ : trz;
 
         return new THREE.Matrix4()
