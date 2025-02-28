@@ -56,15 +56,9 @@ CameraSync.prototype = {
         }
 
         const t = this.map.transform;
-        const farZ = t.farZ;
-        const nearZ = t.nearZ;
-        const h = t.height;
-        const w = t.width;
-        if (this.camera instanceof THREE.OrthographicCamera) {
-            this.camera.projectionMatrix = utils.makeOrthographicMatrix(w / - 2, w / 2, h / 2, h / - 2, nearZ, farZ);
-        } else {
-            this.camera.projectionMatrix = utils.makePerspectiveMatrix(t.fovInRadians, w / h, nearZ, farZ);
-        }
+        const projectionMatrix = new THREE.Matrix4();
+        projectionMatrix.elements = t.projectionMatrix;
+        this.camera.projectionMatrix = projectionMatrix
         // Unlike the Mapbox GL JS camera, separate camera translation and rotation out into its world matrix
         // If this is applied directly to the projection matrix, it will work OK but break raycasting
         let cameraWorldMatrix = this.calcCameraMatrix(t.pitchInRadians, -t.bearingInRadians);
@@ -72,15 +66,14 @@ CameraSync.prototype = {
 
         let zoomPow = t.scale * this.state.worldSizeRatio;
         // Handle scaling and translation of objects in the map in the world's matrix transform, not the camera
-        let scale = new THREE.Matrix4;
-        let translateMap = new THREE.Matrix4;
-        let rotateMap = new THREE.Matrix4;
+        let scale = new THREE.Matrix4();
+        let translateMap = new THREE.Matrix4();
+        let rotateMap = new THREE.Matrix4();
 
         scale.makeScale(zoomPow, zoomPow, zoomPow);
 
         let x = t.cameraPosition[0];
         let y = t.cameraPosition[1];
-        // let z = t.cameraPosition[2];
         
         translateMap.makeTranslation(-x, y, 0);
         rotateMap.makeRotationZ(Math.PI);

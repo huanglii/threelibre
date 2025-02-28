@@ -6,6 +6,7 @@
 	<script src='https://unpkg.com/maplibre-gl@5.1.1/dist/maplibre-gl.js'></script>
 	<script src="../dist/threebox.js" type="text/javascript"></script>
 	<link href="../dist/threebox.css" rel="stylesheet" type="text/css" />
+	<script src="./config.js" type="text/javascript"></script>
 	<style>
 		body,
 		html {
@@ -43,11 +44,11 @@
 
 	<script type="module">
 		//starting location for both map and eventual sphere
-		var origin = [106.560, 29.56, 1];
+		var origin = [-122.4340, 37.7353, 1];
 
 		var map = new maplibregl.Map({
 			container: 'map',
-			style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/sitian/sitian.json',
+			style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_KEY}`,
 			center: origin,
 			zoom: 17,
 			pitch: 60,

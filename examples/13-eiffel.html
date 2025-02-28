@@ -102,7 +102,7 @@
 		let selectedStyle = styles.night;
 
 		var map = new maplibregl.Map({
-			style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + selectedStyle + '.json',
+			style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_KEY}`,
 			center: point.center,
 			zoom: point.zoom,
 			pitch: point.pitch,

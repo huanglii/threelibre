@@ -1,3 +1,1 @@
-var config = {
-    accessToken: ''
-};
+const MAPTILER_KEY = ''

@@ -57,18 +57,18 @@
 
 		let minZoom = 12;
 		let mapConfig = {
-			map: { center: [106.4, 29.4], zoom: 20, pitch: 60, bearing: 38 }, 
-			truck: { origin: [106.4, 29.4, 0], type: 'glb', model: './models/vehicles/car', rotation: { x: 90, y: -90, z: 0 }, scale: 5, startRotation: { x: 0, y: 0, z: -38 }, date: new Date(2020, 6, 19, 23) },
+			map: { center: [-73.985699, 40.750042], zoom: 20, pitch: 60, bearing: 38 }, 
+			truck: { origin: [-73.985699, 40.750042, 0], type: 'glb', model: './models/vehicles/car', rotation: { x: 90, y: -90, z: 0 }, scale: 5, startRotation: { x: 0, y: 0, z: -38 }, date: new Date(2020, 6, 19, 23) },
 			names: {
-				compositeSource: "composite",
-				compositeSourceLayer: "building_footprint_cq",
+				compositeSource: "maptiler_planet",
+				compositeSourceLayer: "building",
 				compositeLayer: "3d-buildings"
 			}
 		}
 
 		let map = new maplibregl.Map({
 			container: 'map',
-			style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/dark.json',
+			style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_KEY}`,
 			zoom: mapConfig.map.zoom,
 			center: mapConfig.map.center,
 			pitch: mapConfig.map.pitch,
@@ -141,14 +141,6 @@
 		let keys;
 
 		map.on('style.load', function () {
-			map.addSource(mapConfig.names.compositeSource, {
-				"type": "vector",
-				"tiles": [
-					"https://fw.cqzhitian.cn/geoserver/gwc/service/wmts/rest/other:building_footprint_cq/EPSG:900913/EPSG:900913:{z}/{y}/{x}?format=application/vnd.mapbox-vector-tile",
-				],
-				"bounds": [106.209511,29.212572,106.821617,29.83123],
-			})
-
 			map.addLayer(createCustomLayer('3d-model'));
 
 			let l = mapConfig.names.compositeLayer;

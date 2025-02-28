@@ -74,7 +74,7 @@ Threebox.prototype = {
 		this.objectsCache = new Map();
 		this.zoomLayers = [];
 
-		this.fov = this.options.fov;
+		this.fov = this.map.transform.fov;
 		this.orthographic = this.options.orthographic || false;
 
 		//raycaster for mouse events
