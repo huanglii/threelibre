@@ -67,6 +67,28 @@
 		})
 
 		map.on('style.load', function () {
+			map.addSource('point', {
+				type: 'geojson',
+				data: {
+					type: 'FeatureCollection',
+					features: [{
+						type: 'Feature',
+						geometry: {
+							type: 'Point',
+							coordinates: origin
+						}
+					}]
+				}
+			})
+			map.addLayer({
+				id: 'point',
+				type: 'circle',
+				source: 'point',
+				paint: {
+					'circle-radius': 10,
+					'circle-color': '#007cbf'
+				}
+			})
 			// stats
 			stats = new Stats();
 			map.getContainer().appendChild(stats.dom);

@@ -14,5 +14,6 @@
 /server.js
 /ThreeboxSolution.sln
 /ThreeboxSolution/
+.vscode
 
 .DS_Store
