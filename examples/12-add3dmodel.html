@@ -59,7 +59,7 @@
 
 		var map = (window.map = new maplibregl.Map({
 			container: 'map',
-			style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + selectedStyle + '.json',
+			style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_KEY}`,
 			zoom: 18,
 			center: [148.9819, -35.3981],
 			pitch: 60,
@@ -152,12 +152,12 @@
 			let sunTimes = tb.getSunTimes(date, origin);
 			if (date >= sunTimes.sunriseEnd && date <= sunTimes.sunsetStart) {
 				if (selectedStyle != styles.day) {
-					tb.setStyle('https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + styles.night + '.json');
+					tb.setStyle(`https://api.maptiler.com/maps/${selectedStyle}/style.json?key=${MAPTILER_KEY}`);
 					selectedStyle = styles.day;
 				}
 			} else {
 				if (selectedStyle != styles.night) {
-					tb.setStyle('https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/' + styles.night + '.json');
+					tb.setStyle(`https://api.maptiler.com/maps/${selectedStyle}/style.json?key=${MAPTILER_KEY}`);
 					selectedStyle = styles.night;
 				}
 			}

@@ -2,10 +2,11 @@
 
 <head>
 	<title>Sphere Example</title>
-	<link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' />
-	<script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
-	<script src="../dist/threebox.min.js" type="text/javascript"></script>
+	<link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.1.1/dist/maplibre-gl.css' />
+	<script src='https://unpkg.com/maplibre-gl@5.1.1/dist/maplibre-gl.js'></script>
+	<script src="../dist/threebox.js" type="text/javascript"></script>
 	<link href="../dist/threebox.css" rel="stylesheet" type="text/css" />
+	<script src="./config.js" type="text/javascript"></script>
 	<style>
 		body,
 		html {
@@ -50,7 +51,8 @@
 			style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_KEY}`,
 			center: origin,
 			zoom: 17,
-			pitch: 60
+			pitch: 60,
+			bearing: 45,
 		});
 
 		let stats;
@@ -60,7 +62,34 @@
 			stats.update();
 		}
 
+		map.on('CameraSynced', e => {
+			console.log(e);
+
+		})
+
 		map.on('style.load', function () {
+			map.addSource('point', {
+				type: 'geojson',
+				data: {
+					type: 'FeatureCollection',
+					features: [{
+						type: 'Feature',
+						geometry: {
+							type: 'Point',
+							coordinates: origin
+						}
+					}]
+				}
+			})
+			map.addLayer({
+				id: 'point',
+				type: 'circle',
+				source: 'point',
+				paint: {
+					'circle-radius': 10,
+					'circle-color': '#007cbf'
+				}
+			})
 			// stats
 			stats = new Stats();
 			map.getContainer().appendChild(stats.dom);

@@ -27,7 +27,7 @@
 
         var map = new maplibregl.Map({
             container: 'map',
-            style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/sitian/sitian.json', //'/Styles/empty-v9.json', //
+            style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${MAPTILER_KEY}`, //'/Styles/empty-v9.json', //
             center: origin,
             zoom: 0,
             pitch: 47,

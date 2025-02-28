@@ -35,7 +35,7 @@
 
 		let map = new maplibregl.Map({
 			container: 'map',
-			style: 'https://fw.cqzhitian.cn/geoserver/www/mapbox/styles/satellite.json',
+			style: `https://api.maptiler.com/maps/satellite/style.json?key=${MAPTILER_KEY}`,
 			center: mapConfig.MAD.center,
 			zoom: mapConfig.MAD.zoom,
 			pitch: mapConfig.MAD.pitch,
